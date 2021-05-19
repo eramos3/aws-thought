@@ -25,21 +25,25 @@ router.get('/users', (req, res) => {
 // get thoughts from a user
 router.get('/users/:username', (req, res) => {
   console.log(`Querying for thought(s) from ${req.params.username}.`);
+
   const params = {
     TableName: table,
     KeyConditionExpression: "#un = :user",
     ExpressionAttributeNames: {
       "#un": "username",
       "#ca": "createdAt",
-      "#th": "thought"
+      "#th": "thought",
+      "#img": "image"    // add the image attribute alias
     },
     ExpressionAttributeValues: {
       ":user": req.params.username
     },
-    ProjectionExpression: "#th, #ca"
+    ProjectionExpression: "#un, #th, #ca, #img", // add the image to the database response
+    ScanIndexForward: false  // false makes the order descending(true is default)
   };
-
+  // database call
   dynamodb.query(params, (err, data) => {
+
     if (err) {
       console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
       res.status(500).json(err); // an error occurred
@@ -47,7 +51,7 @@ router.get('/users/:username', (req, res) => {
       console.log("Query succeeded.");
       res.json(data.Items)
     }
-  });
+  })
 });
 
 // Create new user
@@ -134,7 +138,7 @@ router.delete('/users/:time/:username', (req, res) => {
 // router.put('/users/:username', (req, res) => {
 //   res.json({ "which": "which" })
 // });
-  // const { time, username } = req.params;
+// const { time, username } = req.params;
 
 //   var table = "Movies";
 
