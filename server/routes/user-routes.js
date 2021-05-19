@@ -61,7 +61,8 @@ router.post('/users', (req, res) => {
     Item: {
       "username": req.body.username,
       "createdAt": Date.now(),
-      "thought": req.body.thought
+      "thought": req.body.thought,
+      "image": req.body.image
     }
   };
   dynamodb.put(params, (err, data) => {
@@ -120,6 +121,9 @@ router.delete('/users/:time/:username', (req, res) => {
     },
     ExpressionAttributeValues: {
       ":time": time,
+    },
+    ExpressionAttributeValues: {
+      ":img": "image  ",
     }
   }
 
